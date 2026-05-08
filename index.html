@@ -3,305 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistente de calculos </title>
+    <title>Bot Interativo - POO</title>
     <style>
-        /* Estética escura com tons pastéis */
-        :root {
-            --bg-color: #121214;
-            --card-bg: #202024;
-            --text-light: #E1E1E6;
-            --pastel-purple: #B4B5FF;
-            --pastel-pink: #FFB4E6;
-            --pastel-blue: #B4E6FF;
-            --btn-hover: #323238;
+        /* ESTILOS (CSS) - Deixando o bot bonito */
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            background-color: #1e1e2f; 
+            color: #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+        .bot-container { 
+            background-color: #2a2a40; 
+            width: 100%; 
+            max-width: 450px; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
+        h2 { text-align: center; color: #4facfe; margin-top: 0; }
+        h3 { color: #cfd8dc; font-size: 16px; margin-bottom: 10px; border-bottom: 1px solid #4facfe; padding-bottom: 5px;}
+        
+        /* Telas */
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .container {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            border-top: 4px solid var(--pastel-purple);
+        /* Botões e Inputs */
+        button { 
+            width: 100%; padding: 12px; margin: 8px 0; 
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
+            color: #000; font-weight: bold; font-size: 14px; 
+            border: none; border-radius: 6px; cursor: pointer; transition: 0.2s;
         }
-
-        h1, h2 {
-            color: var(--pastel-purple);
-            margin-bottom: 20px;
+        button:hover { filter: brightness(1.1); transform: scale(1.02); }
+        .btn-voltar { background: #ff4b4b; color: white; margin-top: 20px;}
+        .btn-voltar:hover { filter: brightness(1.1); }
+        
+        input, select { 
+            width: 100%; padding: 10px; margin: 8px 0 15px 0; 
+            border-radius: 6px; border: 1px solid #4facfe; 
+            background-color: #1e1e2f; color: white; font-size: 14px;
         }
-
-        .menu-btn {
-            background-color: transparent;
-            color: var(--text-light);
-            border: 2px solid var(--pastel-blue);
-            padding: 12px 20px;
-            margin: 10px 0;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .menu-btn:hover {
-            background-color: var(--btn-hover);
-            border-color: var(--pastel-pink);
-            transform: translateY(-2px);
-        }
-
-        .section {
-            display: none;
-            text-align: left;
-        }
-
-        .active {
-            display: block;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            color: var(--pastel-blue);
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--bg-color);
-            border: 1px solid #323238;
-            color: white;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-
-        .action-btn {
-            background-color: var(--pastel-purple);
-            color: var(--bg-color);
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--pastel-pink);
-        }
-
-        .back-btn {
-            background-color: transparent;
-            color: #8D8D99;
-            border: none;
-            margin-top: 20px;
-            cursor: pointer;
-            text-decoration: underline;
-            width: 100%;
-        }
-
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--bg-color);
-            border-left: 4px solid var(--pastel-pink);
-            border-radius: 4px;
-            display: none;
+        
+        /* Caixa de Resultado */
+        .resultado-box {
+            margin-top: 20px; padding: 15px; background-color: #1e1e2f; 
+            border-left: 4px solid #00f2fe; border-radius: 4px; min-height: 50px;
+            font-family: monospace; font-size: 14px; word-wrap: break-word;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="menu" class="section active">
-        <h1>[ Assistente de calculos ]</h1>
+<div class="bot-container">
+    <h2> Sistema de Conersão - NAV</h2>
+
+    <div id="tela-menu" class="screen active">
+        <h3>Menu Principal</h3>
         <p>Olá! Selecione a opção desejada:</p>
-        <button class="menu-btn" onclick="showSection('calc')">Calculadora</button>
-        <button class="menu-btn" onclick="showSection('medidas')">Medidas e Áreas</button>
-        <button class="menu-btn" onclick="showSection('comissao')">Calcular Comissão</button>
+        <button onclick="mudarTela('tela-calculadora')">[1] Calculadora</button>
+        <button onclick="mudarTela('tela-medidas')">[2] Medidas</button>
+        <button onclick="mudarTela('tela-comissao')">[3] Calcular Comissão</button>
     </div>
 
-    <div id="calc" class="section">
-        <h2>Calculadora</h2>
-        <label>Operação:</label>
-        <select id="calcOp">
-            <option value="+">Soma</option>
-            <option value="-">Subtração</option>
-            <option value="*">Multiplicação</option>
-            <option value="/">Divisão</option>
-        </select>
-        <label>Primeiro número:</label>
-        <input type="number" id="calcN1">
-        <label>Segundo número:</label>
-        <input type="number" id="calcN2">
-        <button class="action-btn" onclick="calcular()">Calcular</button>
-        <div id="resCalc" class="result-box"></div>
-        <button class="back-btn" onclick="showSection('menu')">Voltar ao Menu</button>
-    </div>
-
-    <div id="medidas" class="section">
-        <h2>Medidas e Áreas</h2>
-        <label>Tipo de Conversão:</label>
-        <select id="medOp">
-            <option value="pol-mm">Polegada para Milímetro</option>
-            <option value="mm-pol">Milímetro para Polegada</option>
-            <option value="pol-cm">Polegada para Centímetro</option>
-            <option value="cm-pol">Centímetro para Polegada</option>
-            <option value="area-m2">Calcular Metro Quadrado (Largura x Comprimento)</option>
-        </select>
-        <div id="inputMedidas">
-            <label id="lblMedida1">Valor:</label>
-            <input type="number" id="medValor1">
-            <div id="medida2Div" style="display:none;">
-                <label>Comprimento:</label>
-                <input type="number" id="medValor2">
-            </div>
-        </div>
-        <button class="action-btn" onclick="converterMedidas()">Converter</button>
-        <div id="resMed" class="result-box"></div>
-        <button class="back-btn" onclick="showSection('menu')">Voltar ao Menu</button>
-    </div>
-
-    <div id="comissao" class="section">
-        <h2>Painel de Vendas</h2>
-        <p>Meta Fixa: R$ 100.000,00</p>
-        <label>O que deseja fazer?</label>
-        <select id="comOp" onchange="toggleComissaoInputs()">
-            <option value="meta">Consultar Valor por Dia</option>
-            <option value="comissao">Consultar Comissão Atual</option>
-        </select>
+    <div id="tela-calculadora" class="screen">
+        <h3>Calculadora</h3>
+        <input type="number" id="calc-n1" placeholder="Digite o 1º número">
+        <input type="number" id="calc-n2" placeholder="Digite o 2º número">
         
-        <label>Total Vendido até agora:</label>
-        <input type="number" id="vendasTotal" placeholder="Ex: 50000">
-
-        <div id="diaDiv">
-            <label>Dias no Mês (Ex: 31):</label>
-            <input type="number" id="diasMes" value="31">
-            <label>Dia de Hoje:</label>
-            <input type="number" id="diaHoje" placeholder="Ex: 15">
+        <div style="display: flex; gap: 5px;">
+            <button onclick="calcular('+')">+</button>
+            <button onclick="calcular('-')">-</button>
+            <button onclick="calcular('*')">×</button>
+            <button onclick="calcular('/')">÷</button>
         </div>
 
-        <button class="action-btn" onclick="calcularComissao()">Verificar</button>
-        <div id="resCom" class="result-box"></div>
-        <button class="back-btn" onclick="showSection('menu')">Voltar ao Menu</button>
+        <div class="resultado-box" id="res-calculadora">O resultado aparecerá aqui...</div>
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">Voltar ao Menu</button>
     </div>
+
+    <div id="tela-medidas" class="screen">
+        <h3>Medidas e Conversões</h3>
+        
+        <label>Conversão Simples:</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="medida-valor" placeholder="Valor" style="width: 50%;">
+            <select id="medida-tipo" style="width: 50%;">
+                <option value="pol-mm">Pol ➔ mm</option>
+                <option value="mm-pol">mm ➔ Pol</option>
+                <option value="cm-mm">cm ➔ mm</option>
+            </select>
+        </div>
+        <button onclick="converterMedida()">Converter Medida</button>
+
+        <label style="display:block; margin-top:15px;">Calcular Área (M²):</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="area-larg" placeholder="Largura (m)">
+            <input type="number" id="area-comp" placeholder="Comprimento (m)">
+        </div>
+        <button onclick="calcularArea()">Calcular M² e Hectares</button>
+
+        <div class="resultado-box" id="res-medidas">O resultado aparecerá aqui...</div>
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">Voltar ao Menu</button>
+    </div>
+
+    <div id="tela-comissao" class="screen">
+        <h3>Gestão de Comissão</h3>
+        <p>Meta Atual: <strong>R$ 100.000,00</strong></p>
+        
+        <input type="number" id="comissao-vendido" placeholder="Valor Total Vendido (R$)">
+        <input type="number" id="comissao-dia" placeholder="Que dia é hoje? (1 a 31)">
+        
+        <button onclick="calcularMetaDia()">Verificar Valor por Dia</button>
+        <button onclick="calcularComissao()">Calcular Comissão (0,35%)</button>
+
+        <div class="resultado-box" id="res-comissao">O resultado aparecerá aqui...</div>
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">Voltar ao Menu</button>
+    </div>
+
 </div>
 
 <script>
-    // Navegação entre as telas
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.result-box').forEach(box => box.style.display = 'none');
-    }
-
-    function exibirResultado(idElemento, texto) {
-        const box = document.getElementById(idElemento);
-        box.innerText = texto;
-        box.style.display = 'block';
+    // Função para navegar entre as telas
+    function mudarTela(idTelaDestino) {
+        // Esconde todas as telas
+        let telas = document.querySelectorAll('.screen');
+        telas.forEach(t => t.classList.remove('active'));
+        
+        // Mostra a tela solicitada
+        document.getElementById(idTelaDestino).classList.add('active');
+        
+        // Limpa as caixas de resultado ao trocar de tela
+        document.getElementById('res-calculadora').innerText = "O resultado aparecerá aqui...";
+        document.getElementById('res-medidas').innerText = "O resultado aparecerá aqui...";
+        document.getElementById('res-comissao').innerText = "O resultado aparecerá aqui...";
     }
 
     // Lógica da Calculadora
-    function calcular() {
-        let n1 = parseFloat(document.getElementById('calcN1').value);
-        let n2 = parseFloat(document.getElementById('calcN2').value);
-        let op = document.getElementById('calcOp').value;
-        let res = 0;
+    function calcular(operador) {
+        let n1 = parseFloat(document.getElementById('calc-n1').value);
+        let n2 = parseFloat(document.getElementById('calc-n2').value);
+        let divRes = document.getElementById('res-calculadora');
 
-        if (isNaN(n1) || isNaN(n2)) return alert("Preencha ambos os números.");
-
-        if (op === '+') res = n1 + n2;
-        else if (op === '-') res = n1 - n2;
-        else if (op === '*') res = n1 * n2;
-        else if (op === '/') {
-            if (n2 === 0) return exibirResultado('resCalc', "Não é possível dividir por zero.");
-            res = n1 / n2;
+        if (isNaN(n1) || isNaN(n2)) {
+            divRes.innerText = "Erro: Por favor, digite os dois números!";
+            return;
         }
-        exibirResultado('resCalc', `Resultado: ${n1} ${op} ${n2} = ${res.toFixed(2)}`);
-    }
 
-    // Mudança de inputs na área de Medidas
-    document.getElementById('medOp').addEventListener('change', function() {
-        if(this.value === 'area-m2') {
-            document.getElementById('lblMedida1').innerText = "Largura (m):";
-            document.getElementById('medida2Div').style.display = "block";
-        } else {
-            document.getElementById('lblMedida1').innerText = "Valor:";
-            document.getElementById('medida2Div').style.display = "none";
-        }
-    });
-
-    // Lógica de Medidas
-    function converterMedidas() {
-        let op = document.getElementById('medOp').value;
-        let v1 = parseFloat(document.getElementById('medValor1').value);
-        let v2 = parseFloat(document.getElementById('medValor2').value);
-
-        if (isNaN(v1)) return alert("Preencha o valor.");
-
-        let res = "";
-        switch(op) {
-            case 'pol-mm': res = `Conversão: ${(v1 * 25.4).toFixed(2)} mm`; break;
-            case 'mm-pol': res = `Conversão: ${(v1 / 25.4).toFixed(4)} polegadas`; break;
-            case 'pol-cm': res = `Conversão: ${(v1 * 2.54).toFixed(2)} cm`; break;
-            case 'cm-pol': res = `Conversão: ${(v1 / 2.54).toFixed(4)} polegadas`; break;
-            case 'area-m2': 
-                if (isNaN(v2)) return alert("Preencha o comprimento.");
-                res = `Área total: ${(v1 * v2).toFixed(2)} m²`; 
+        let resultado = 0;
+        switch (operador) {
+            case '+': resultado = n1 + n2; break;
+            case '-': resultado = n1 - n2; break;
+            case '*': resultado = n1 * n2; break;
+            case '/': 
+                if (n2 === 0) {
+                    divRes.innerText = "Erro: Não é possível dividir por zero!";
+                    return;
+                }
+                resultado = n1 / n2; 
                 break;
         }
-        exibirResultado('resMed', res);
+        divRes.innerText = `${n1} ${operador} ${n2} = ${resultado}`;
+    }
+
+    // Lógica de Medidas
+    function converterMedida() {
+        let valor = parseFloat(document.getElementById('medida-valor').value);
+        let tipo = document.getElementById('medida-tipo').value;
+        let divRes = document.getElementById('res-medidas');
+
+        if (isNaN(valor)) {
+            divRes.innerText = "Erro: Digite um valor para converter.";
+            return;
+        }
+
+        let res = 0;
+        let texto = "";
+
+        if (tipo === 'pol-mm') {
+            res = valor * 25.4;
+            texto = `${valor} Pol = ${res.toFixed(2)} mm`;
+        } else if (tipo === 'mm-pol') {
+            res = valor / 25.4;
+            texto = `${valor} mm = ${res.toFixed(4)} Pol`;
+        } else if (tipo === 'cm-mm') {
+            res = valor * 10;
+            texto = `${valor} cm = ${res} mm`;
+        }
+
+        divRes.innerText = texto;
+    }
+
+    function calcularArea() {
+        let larg = parseFloat(document.getElementById('area-larg').value);
+        let comp = parseFloat(document.getElementById('area-comp').value);
+        let divRes = document.getElementById('res-medidas');
+
+        if (isNaN(larg) || isNaN(comp)) {
+            divRes.innerText = "Erro: Digite a largura e o comprimento.";
+            return;
+        }
+
+        let areaM2 = larg * comp;
+        let areaHectar = areaM2 / 10000;
+
+        divRes.innerText = `Área: ${areaM2.toFixed(2)} M²\nHectares: ${areaHectar.toFixed(4)} ha`;
     }
 
     // Lógica da Comissão
-    function toggleComissaoInputs() {
-        let op = document.getElementById('comOp').value;
-        document.getElementById('diaDiv').style.display = op === 'meta' ? 'block' : 'none';
+    const VALOR_META = 100000;
+
+    function calcularMetaDia() {
+        let vendido = parseFloat(document.getElementById('comissao-vendido').value);
+        let dia = parseInt(document.getElementById('comissao-dia').value);
+        let divRes = document.getElementById('res-comissao');
+
+        if (isNaN(vendido) || isNaN(dia) || dia < 1 || dia > 31) {
+            divRes.innerText = "Erro: Preencha o valor vendido e um dia válido (1 a 31).";
+            return;
+        }
+
+        // Assumindo um mês padrão de 30 dias para simplificar o exemplo na web
+        let diasRestantes = 30 - dia; 
+        
+        if (diasRestantes <= 0) {
+            divRes.innerText = "O mês já acabou ou faltam 0 dias úteis.";
+        } else {
+            let valorPorDia = (VALOR_META - vendido) / diasRestantes;
+            if(valorPorDia <= 0) {
+                 divRes.innerText = "Parabéns! A meta já foi batida!";
+            } else {
+                 divRes.innerText = `Faltam ${diasRestantes} dias no mês.\nVocê precisa vender R$ ${valorPorDia.toFixed(2)} por dia para bater a meta.`;
+            }
+        }
     }
 
     function calcularComissao() {
-        let op = document.getElementById('comOp').value;
-        let vendido = parseFloat(document.getElementById('vendasTotal').value);
-        let meta = 100000;
+        let vendido = parseFloat(document.getElementById('comissao-vendido').value);
+        let divRes = document.getElementById('res-comissao');
 
-        if (isNaN(vendido)) return alert("Preencha o valor vendido.");
-
-        if (op === 'meta') {
-            let diasMes = parseInt(document.getElementById('diasMes').value);
-            let diaHoje = parseInt(document.getElementById('diaHoje').value);
-            
-            if (isNaN(diasMes) || isNaN(diaHoje) || diaHoje >= diasMes) {
-                return alert("Preencha os dias corretamente.");
-            }
-
-            let diasRestantes = diasMes - diaHoje;
-            let faltante = meta - vendido;
-            
-            if (faltante <= 0) {
-                exibirResultado('resCom', "Parabéns! Meta atingida.");
-            } else {
-                let valorPorDia = faltante / diasRestantes;
-                exibirResultado('resCom', `Falta vender: R$ ${faltante.toFixed(2)}\nValor a vender por dia: R$ ${valorPorDia.toFixed(2)}`);
-            }
-        } else if (op === 'comissao') {
-            // Comissão de 0.35% baseada no seu código Java
-            let comissao = vendido * 0.0035;
-            exibirResultado('resCom', `Sua comissão atual é de: R$ ${comissao.toFixed(2)}`);
+        if (isNaN(vendido)) {
+            divRes.innerText = "Erro: Digite o valor total vendido.";
+            return;
         }
+
+        let comissao = vendido * 0.0035; // 0,35%
+        divRes.innerText = `Sua comissão sobre R$ ${vendido.toFixed(2)} é de:\nR$ ${comissao.toFixed(2)}`;
     }
 </script>
 
